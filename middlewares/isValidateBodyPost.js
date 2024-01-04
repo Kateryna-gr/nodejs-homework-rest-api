@@ -1,4 +1,4 @@
-import { contactAddSchema } from "../schemas/contacts-schemas.js";
+import { contactAddSchema } from "../models/Contact.js";
 
 export const isValidateBodyPost = (req, res, next) => {
   const { error } = contactAddSchema.validate(req.body);
