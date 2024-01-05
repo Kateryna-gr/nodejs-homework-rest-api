@@ -9,7 +9,7 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   const { contactId } = req.params;
-  const result = await Contact.findById(contactId);
+  const result = await Contact.findById(contactId, "name phone");
   if (!result) {
     return res.status(404).json({ message: "Not found" });
   }
@@ -41,10 +41,20 @@ const updateById = async (req, res) => {
   res.json(result);
 };
 
+const updateStatusContact = async (req, res) => {
+  const { contactId } = req.params;
+  const result = await Contact.findByIdAndUpdate(contactId, req.body);
+  if (!result) {
+    return res.status(404).json({ message: "Not found" });
+  }
+  res.json(result);
+};
+
 export default {
   getAll: controllerWrapper(getAll),
   getById: controllerWrapper(getById),
   removeById: controllerWrapper(removeById),
   addNew: controllerWrapper(addNew),
   updateById: controllerWrapper(updateById),
+  updateStatusContact: controllerWrapper(updateStatusContact),
 };
