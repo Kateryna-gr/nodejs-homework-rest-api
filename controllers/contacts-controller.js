@@ -1,5 +1,5 @@
 import Contact from "../models/Contact.js";
-
+import createError from "../helpers/createError.js";
 import { controllerWrapper } from "../middlewares/index.js";
 
 const getAll = async (req, res) => {
@@ -11,7 +11,7 @@ const getById = async (req, res) => {
   const { contactId } = req.params;
   const result = await Contact.findById(contactId, "name phone");
   if (!result) {
-    return res.status(404).json({ message: "Not found" });
+    throw createError(404);
   }
   res.json(result);
 };
@@ -20,7 +20,7 @@ const removeById = async (req, res) => {
   const { contactId } = req.params;
   const result = await Contact.findByIdAndDelete(contactId);
   if (!result) {
-    return res.status(404).json({ message: "Not found" });
+    throw createError(404);
   }
   res.json({
     message: "contact deleted",
@@ -36,7 +36,7 @@ const updateById = async (req, res) => {
   const { contactId } = req.params;
   const result = await Contact.findByIdAndUpdate(contactId, req.body);
   if (!result) {
-    return res.status(404).json({ message: "Not found" });
+    throw createError(404);
   }
   res.json(result);
 };
@@ -45,7 +45,7 @@ const updateStatusContact = async (req, res) => {
   const { contactId } = req.params;
   const result = await Contact.findByIdAndUpdate(contactId, req.body);
   if (!result) {
-    return res.status(404).json({ message: "Not found" });
+    throw createError(404);
   }
   res.json(result);
 };
