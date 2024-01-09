@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import Joi from "joi";
 
-import { handleSaveError } from "./hooks.js";
+import { handleSaveError, handleUpdate } from "./hooks.js";
 
 const userSchema = new Schema({
   password: {
@@ -27,6 +27,8 @@ const userSchema = new Schema({
 });
 
 userSchema.post("save", handleSaveError);
+userSchema.pre("findByIdAndUpdate", handleUpdate);
+userSchema.post("findByIdAndUpdate", handleSaveError);
 
 export const userAuthSchema = Joi.object({
   email: Joi.string()
