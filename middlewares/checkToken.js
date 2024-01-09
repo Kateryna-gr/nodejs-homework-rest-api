@@ -19,7 +19,7 @@ export const checkToken = async (req, res, next) => {
   try {
     const { id } = jwt.verify(token, JWT_SECRET);
     const result = await User.findById(id);
-    if (!result || !result.token) {
+    if (!result || !result.token || token !== result.token) {
       return next(createError(401));
     }
   } catch (error) {
