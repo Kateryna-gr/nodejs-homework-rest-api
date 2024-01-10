@@ -13,7 +13,7 @@ export const checkToken = async (req, res, next) => {
   }
 
   const [bearer, token] = authorization.split(" ");
-  if (bearer != "Bearer") {
+  if (bearer !== "Bearer") {
     return next(createError(401));
   }
   try {
@@ -22,8 +22,10 @@ export const checkToken = async (req, res, next) => {
     if (!result || !result.token || token !== result.token) {
       return next(createError(401));
     }
+    req.user = result;
+    next();
   } catch (error) {
-    return next(createError(401));
+    next(createError(401));
   }
   next();
 };

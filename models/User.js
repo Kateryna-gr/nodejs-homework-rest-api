@@ -24,11 +24,11 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "user",
   },
-});
+}, { versionKey: false, timestamps: true });
 
 userSchema.post("save", handleSaveError);
-userSchema.pre("findByIdAndUpdate", handleUpdate);
-userSchema.post("findByIdAndUpdate", handleSaveError);
+userSchema.pre("findOneAndUpdate", handleUpdate);
+userSchema.post("findOneAndUpdate", handleSaveError);
 
 export const userAuthSchema = Joi.object({
   email: Joi.string()
