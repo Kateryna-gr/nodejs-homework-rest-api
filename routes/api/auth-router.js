@@ -4,7 +4,7 @@ import authController from "../../controllers/auth-controller.js";
 
 import { isEmptyBody } from "../../middlewares/index.js";
 import validateBody from "../../decorators/validateBody.js"
-import { userAuthSchema } from "../../models/User.js"
+import { userAuthSchema, userUpdateSubscrSchema } from "../../models/User.js"
 
 import { checkToken } from "../../middlewares/index.js";
 
@@ -17,5 +17,7 @@ router.post("/login", isEmptyBody, validateBody(userAuthSchema), authController.
 router.post("/logout", checkToken, authController.logoutUser);
 
 router.get("/current", checkToken, authController.currentUser);
+
+router.patch("/:userId/subscription", validateBody(userUpdateSubscrSchema), authController.updateSubscription)
 
 export default router;

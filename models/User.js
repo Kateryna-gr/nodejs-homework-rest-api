@@ -3,28 +3,31 @@ import Joi from "joi";
 
 import { handleSaveError, handleUpdate } from "./hooks.js";
 
-const userSchema = new Schema({
-  password: {
-    type: String,
-    required: [true, "Set password for user"],
-    minlenth: 8,
-  },
-  email: {
-    type: String,
-    required: [true, "Email is required"],
-    unique: true,
-  },
-  subscription: {
-    type: String,
-    enum: ["starter", "pro", "business"],
-    default: "starter",
-  },
-  token: String,
-  owner: {
-    type: Schema.Types.ObjectId,
-    ref: "user",
-  },
-}, { versionKey: false, timestamps: true });
+const subscrList = ["starter", "pro", "business"];
+
+const userSchema = new Schema(
+  {
+    password: {
+      type: String,
+      required: [true, "Set password for user"],
+      minlenth: 8,
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+    },
+    subscription: {
+      type: String,
+      enum: subscrList,
+      default: "starter",
+    },
+    token: String,
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
+  }, { versionKey: false, timestamps: true });
 
 userSchema.post("save", handleSaveError);
 userSchema.pre("findOneAndUpdate", handleUpdate);
@@ -39,6 +42,10 @@ export const userAuthSchema = Joi.object({
     .min(8)
     .required()
     .messages({ "any.required": "missing required 'password' field" }),
+});
+
+export const userUpdateSubscrSchema = Joi.object({
+  subscription: Joi.string().valid(...subscrList),
 });
 
 const User = model("user", userSchema);

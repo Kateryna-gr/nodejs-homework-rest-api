@@ -5,21 +5,24 @@ import { controllerWrapper } from "../middlewares/index.js";
 const getAll = async (req, res) => {
   const { _id: owner } = req.user;
 
-  const { page = 1, limit = 5 } = req.query;
-  console.log(limit);
+  const { page = 1, limit = 5, favorite } = req.query;
   const skip = (page - 1) * limit;
-  const result = await Contact.find({ owner }, "", { skip, limit })
-  .populate(
-    "owner",
-    "username"
-  );
+
+  let result = [];
+  if (favorite) {
+    res.json(
+      (result = await Contact.find({ owner, favorite: true }, "name phone"))
+    );
+  } else {
+    res.json((result = await Contact.find({ owner }, "", { skip, limit })));
+  }
   res.json(result);
 };
 
 const getById = async (req, res) => {
-  const { _id: id } = req.params;
+  const { contactId: id } = req.params;
   const { _id: owner } = req.user;
-  const result = await Contact.findOne({ id, owner }, "name phone");
+  const result = await Contact.findById(id, "name phone", { owner });
   if (!result) {
     throw createError(404);
   }
@@ -27,9 +30,9 @@ const getById = async (req, res) => {
 };
 
 const removeById = async (req, res) => {
-  const { _id: id } = req.params;
+  const { contactId: id } = req.params;
   const { _id: owner } = req.user;
-  const result = await Contact.findOneAndDelete({ id, owner });
+  const result = await Contact.findByIdAndDelete(id, { owner });
   if (!result) {
     throw createError(404);
   }
@@ -46,9 +49,9 @@ const addNew = async (req, res) => {
 };
 
 const updateById = async (req, res) => {
-  const { _id: id } = req.params;
+  const { contactId: id } = req.params;
   const { _id: owner } = req.user;
-  const result = await Contact.findOneAndUpdate({ id, owner }, req.body);
+  const result = await Contact.findByIdAndUpdate(id, req.body, { owner });
   if (!result) {
     throw createError(404);
   }
@@ -56,9 +59,9 @@ const updateById = async (req, res) => {
 };
 
 const updateStatusContact = async (req, res) => {
-  const { _id: id } = req.params;
+  const { contactId: id } = req.params;
   const { _id: owner } = req.user;
-  const result = await Contact.findOneAndUpdate({ id, owner }, req.body);
+  const result = await Contact.findByIdAndUpdate(id, req.body, { owner });
   if (!result) {
     throw createError(404);
   }

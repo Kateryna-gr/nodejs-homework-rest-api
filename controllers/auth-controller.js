@@ -68,9 +68,23 @@ const currentUser = async (req, res) => {
   });
 };
 
+const updateSubscription = async (req, res) => {
+  const { userId: id } = req.params;
+  const result = await User.findByIdAndUpdate(id, req.body);
+  if (!result) {
+    throw createError(404);
+  }
+
+  res.json({
+    email: result.email,
+    subscription: result.subscription,
+  });
+};
+
 export default {
   registerUser: controllerWrapper(registerUser),
   loginUser: controllerWrapper(loginUser),
   logoutUser: controllerWrapper(logoutUser),
   currentUser: controllerWrapper(currentUser),
+  updateSubscription: controllerWrapper(updateSubscription),
 };
