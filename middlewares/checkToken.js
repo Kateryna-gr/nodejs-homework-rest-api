@@ -27,5 +27,4 @@ export const checkToken = async (req, res, next) => {
   } catch (error) {
     next(createError(401));
   }
-  next();
 };
