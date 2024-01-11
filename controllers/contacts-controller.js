@@ -9,7 +9,7 @@ const getAll = async (req, res) => {
   const skip = (page - 1) * limit;
 
   const result = favorite
-    ? await Contact.find({ owner, favorite }, "name phone")
+    ? await Contact.find({ owner, favorite }, "name phone").populate("owner", "email")
     : await Contact.find({ owner }, "", { skip, limit });
   res.json(result);
 };
