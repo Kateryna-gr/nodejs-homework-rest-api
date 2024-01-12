@@ -10,9 +10,7 @@ import { checkToken } from "../../middlewares/index.js";
 
 const router = express.Router();
 
-// router.post("/register", isEmptyBody, validateBody(userAuthSchema), authController.registerUser);
-router.post("/register", upload.single("avatars"), isEmptyBody, validateBody(userAuthSchema), authController.registerUser);
-
+router.post("/register", isEmptyBody, validateBody(userAuthSchema), authController.registerUser);
 
 router.post("/login", isEmptyBody, validateBody(userAuthSchema), authController.loginUser);
 
@@ -20,6 +18,8 @@ router.post("/logout", checkToken, authController.logoutUser);
 
 router.get("/current", checkToken, authController.currentUser);
 
-router.patch("/:userId/subscription", validateBody(userUpdateSubscrSchema), authController.updateSubscription)
+router.patch("/:userId/subscription", checkToken, validateBody(userUpdateSubscrSchema), authController.updateSubscription)
+
+router.patch("/avatars", checkToken, upload.single("avatar"), authController.updateAvatar)
 
 export default router;

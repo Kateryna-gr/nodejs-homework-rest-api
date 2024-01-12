@@ -27,8 +27,8 @@ const userSchema = new Schema(
   }, { versionKey: false, timestamps: true });
 
 userSchema.post("save", handleSaveError);
-userSchema.pre("findOneAndUpdate", handleUpdate);
-userSchema.post("findOneAndUpdate", handleSaveError);
+userSchema.pre("findByIdAndUpdate", handleUpdate);
+userSchema.post("findByIdAndUpdate", handleSaveError);
 
 export const userAuthSchema = Joi.object({
   email: Joi.string()

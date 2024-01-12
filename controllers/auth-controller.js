@@ -3,13 +3,12 @@ import jwt from "jsonwebtoken";
 
 import fs from "fs/promises";
 import path from "path";
+import Jimp from "jimp";
 import gravatar from "gravatar";
 
 import User from "../models/User.js";
 import createError from "../helpers/createError.js";
 import { controllerWrapper } from "../middlewares/index.js";
-
-const avatarsPath = path.resolve("public", "avatars");
 
 const { JWT_SECRET } = process.env;
 
@@ -20,17 +19,12 @@ const registerUser = async (req, res) => {
     throw createError(409, "Email in use");
   }
 
-  // const { path: oldPath, filename } = req.file;
-  // const newPath = path.join(avatarsPath, filename);
-  // await fs.rename(oldPath, newPath);
-  // const avatar = path.join("avatars", filename);
-
-  const avatarsPath = gravatar.url(email);
-
+  const avatar = gravatar.url(email);
   const hashPassword = await bcrypt.hash(password, 10);
+
   const result = await User.create({
     ...req.body,
-    avatarsPath,
+    avatarURL: avatar,
     password: hashPassword,
   });
 
@@ -98,10 +92,36 @@ const updateSubscription = async (req, res) => {
   });
 };
 
+const updateAvatar = async (req, res) => {
+  const { path: tempPath, filename } = req.file;
+
+  Jimp.read(tempPath)
+    .then((img) => {
+      return img.cover(250, 250).write(`public//avatars//resize_${filename}`);
+    })
+    .catch((error) => {
+      return error;
+    });
+  await fs.unlink(tempPath);
+  const avatar = path.join("avatars", `resize_${filename}`);
+
+  const { _id: id } = req.user;
+  const result = await User.findByIdAndUpdate(id, { avatarURL: avatar });
+  if (!result) {
+    throw createError(404);
+  }
+
+  res.json({
+    email: req.user.email,
+    avatarURL: avatar,
+  });
+};
+
 export default {
   registerUser: controllerWrapper(registerUser),
   loginUser: controllerWrapper(loginUser),
   logoutUser: controllerWrapper(logoutUser),
   currentUser: controllerWrapper(currentUser),
   updateSubscription: controllerWrapper(updateSubscription),
+  updateAvatar: controllerWrapper(updateAvatar),
 };
