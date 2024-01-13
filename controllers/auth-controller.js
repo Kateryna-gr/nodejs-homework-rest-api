@@ -99,7 +99,9 @@ const updateAvatar = async (req, res) => {
 
   Jimp.read(tempPath)
     .then((img) => {
-      return img.cover(250, 250).write(`${avatarPath}//resize_${filename}`);
+      return img
+        .cover(250, 250)
+        .write(path.join(avatarPath, `resize_${filename}`));
     })
     .catch((error) => {
       return error;
