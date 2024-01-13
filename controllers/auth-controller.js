@@ -12,6 +12,8 @@ import { controllerWrapper } from "../middlewares/index.js";
 
 const { JWT_SECRET } = process.env;
 
+const avatarPath = path.join("public", "avatars");
+
 const registerUser = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -97,7 +99,7 @@ const updateAvatar = async (req, res) => {
 
   Jimp.read(tempPath)
     .then((img) => {
-      return img.cover(250, 250).write(`public//avatars//resize_${filename}`);
+      return img.cover(250, 250).write(`${avatarPath}//resize_${filename}`);
     })
     .catch((error) => {
       return error;
