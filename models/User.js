@@ -24,7 +24,17 @@ const userSchema = new Schema(
     },
     token: String,
     avatarURL: String,
-  }, { versionKey: false, timestamps: true });
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+    },
+  },
+
+  { versionKey: false, timestamps: true }
+);
 
 userSchema.post("save", handleSaveError);
 userSchema.pre("findByIdAndUpdate", handleUpdate);
@@ -43,6 +53,13 @@ export const userAuthSchema = Joi.object({
 
 export const userUpdateSubscrSchema = Joi.object({
   subscription: Joi.string().valid(...subscrList),
+});
+
+export const userVerify = Joi.object({
+  email: Joi.string()
+    .email()
+    .required()
+    .messages({ "any.required": "missing required field email" }),
 });
 
 const User = model("user", userSchema);
