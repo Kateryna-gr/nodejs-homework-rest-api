@@ -15,13 +15,6 @@ const config = {
 
 const transporter = nodemailer.createTransport(config);
 
-// const email = {
-//   from: EMAIL_FROM,
-//   to: "femaw24842@grassdev.com",
-//   subject: "Test",
-//   text: "Test",
-// };
-
 const sendEmail = (data) => {
   const email = { ...data, from: EMAIL_FROM };
   return transporter.sendMail(email);
